@@ -1,64 +1,51 @@
-#Imports Necessários
-from flask import Flask, render_template, request
+import tkinter as tk
+from tkinter import messagebox
 
-app = Flask(__name__)
+class TodoListApp:
+    def __init__(self, root):
+        self.root = root
+        self.root.title("To-Do List")
 
-tasks = []
+        # Lista de tarefas
+        self.tasks = []
 
-@app.route('/')
-def index():
-    return render_template('index.html', tasks=tasks)
+        # Entrada para adicionar tarefa
+        self.task_entry = tk.Entry(root, width=30)
+        self.task_entry.pack(pady=10)
 
-@app.route('/add', methods=['POST'])
-def add():
-    task = request.form.get('task')
-    tasks.append(task)
-    return render_template('index.html', tasks=tasks)
+        # Botão para adicionar tarefa
+        add_button = tk.Button(root, text="Adicionar Tarefa", command=self.add_task)
+        add_button.pack(pady=5)
 
-if __name__ == '__main__':
-    app.run(debug=True)
-    
-#funções Básicas, adicionar, remover e visualizar tarefas
-def add_task(task):
-    tasks.append(task)
+        # Lista para exibir tarefas
+        self.task_listbox = tk.Listbox(root, width=50)
+        self.task_listbox.pack()
 
-def rem_task(task):
-    if task in tasks:
-        task.remove(task)
-    else:
-        print('Não encontramos sua tarefa, tente novamente')
+        # Botão para remover tarefa
+        remove_button = tk.Button(root, text="Remover Tarefa", command=self.remove_task)
+        remove_button.pack(pady=5)
 
-def view_tasks():
-    print('Lista de Tarefas:')
-    for index, task in enumerate(tasks, start=1):
-        print(f"{index}. {task}")
-
-#Menu de interação ao usuário
-def main():
-    while True:
-        print("\nEscolha uma Opção:")
-        print("1. Adicionar Tarefa")
-        print("2. Remover Tarefa")
-        print("3. Visualizar Tarefas")
-        print("4. Sair")
-  
-        choice = input("Digite o número da opção desejada: ")
-
-        if choice == "1":
-            task = input("Digite a nova tarefa: ")
-            add_task(task)
-        elif choice == "2":
-            task = input("Digite a tarefa a ser removida: ")
-            rem_task(task)
-        elif choice == "3":
-            view_tasks()
-        elif choice == "4":
-            print("Até logo!")
-            break
+    def add_task(self):
+        task = self.task_entry.get()
+        if task:
+            self.tasks.append(task)
+            self.update_task_list()
+            self.task_entry.delete(0, tk.END)
         else:
-            print("Opção inválida. Tente novamente.")
-#Execução Do App
+            messagebox.showwarning("Atenção", "Por favor, insira uma tarefa.")
+
+    def remove_task(self):
+        selected_task_index = self.task_listbox.curselection()
+        if selected_task_index:
+            self.tasks.pop(selected_task_index[0])
+            self.update_task_list()
+
+    def update_task_list(self):
+        self.task_listbox.delete(0, tk.END)
+        for task in self.tasks:
+            self.task_listbox.insert(tk.END, task)
+
 if __name__ == "__main__":
-    main()
-#teste
-    
+    root = tk.Tk()
+    app = TodoListApp(root)
+    root.mainloop()

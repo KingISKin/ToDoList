@@ -2,7 +2,7 @@
 Projeto Iniciante para desenvolvimento Pessoal
 
 # Bibliotecas necessárias:
-Flask
+tkinter
 
 # Dev
 João V.
